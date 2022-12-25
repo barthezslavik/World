@@ -21,9 +21,6 @@
 		let keys = {};
 
 		function onKeyDown(event) {
-			// Prevent browser scrolling
-			event.preventDefault();
-
 			// Update the keys object
 			keys[event.code] = true;
 		}
@@ -49,6 +46,18 @@
 			}
 		}
 
+		// Set up the birds group
+		const birds = new THREE.Group();
+
+		// Animate the birds
+		function updateBirds() {
+			for (const bird of birds.children) {
+				bird.position.x += Math.random() * 0.1 - 0.05;
+				bird.position.y += Math.random() * 0.1 - 0.05;
+				bird.position.z += Math.random() * 0.1 - 0.05;
+			}
+		}
+
 		// Set up the scene
 		const scene = new THREE.Scene();
 
@@ -66,14 +75,37 @@
 		const player = new THREE.Mesh(playerGeometry, playerMaterial);
 		scene.add(player);
 
+		// Set up the bird geometry and material
+		const birdGeometry = new THREE.BoxGeometry(1, 1, 1);
+		const birdMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+		// Create the birds
+		for (let i = 0; i < 10; i++) {
+			const bird = new THREE.Mesh(birdGeometry, birdMaterial);
+			bird.position.set(Math.random() * 10 - 5, Math.random() * 10 - 5, Math.random() * 10 - 5);
+			birds.add(bird);
+		}
+
+		scene.add(birds);
+
 		// Render the scene
 		function render() {
 			requestAnimationFrame(render);
 			updatePlayer();
+			updateBirds();
 			renderer.render(scene, camera);
 		}
 		render();
 	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
 </body>
 
 </html>
