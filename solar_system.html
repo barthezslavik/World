@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>My Three.js Scene</title>
+</head>
+
+<body>
+	<!-- Include the Three.js library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r116/three.min.js"></script>
+	<!-- Your Three.js code goes here -->
+	<script>
+		// Set up the scene, camera, and renderer
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+		// Set up the sun position
+		const sunPosition = new THREE.Vector3(0, 0, 0);
+
+		// Set up the camera position and field of view
+		const cameraDistance = 30; // distance from the sun
+		const cameraFOV = 90; // field of view in degrees
+
+		// Update the camera position and field of view
+		camera.position.copy(sunPosition).add(new THREE.Vector3(0, 0, cameraDistance));
+		camera.fov = cameraFOV;
+		camera.updateProjectionMatrix();
+
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		// Set up the sun geometry and material
+		const sunGeometry = new THREE.SphereGeometry(1, 32, 32);
+		const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+		// Create the sun
+		const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+		scene.add(sun);
+
+		// Set up the planet names and sizes
+		const planetNames = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'];
+		const planetSizes = [0.38, 0.95, 1, 0.53, 11.2, 9.45, 4, 3.88];
+		const planetDistances = [0.39, 0.72, 1, 1.52, 5.2, 9.5, 19.2, 30.1];
+		const planetPeriods = [0.241, 0.615, 1, 1.88, 11.86, 29.46, 84.01, 164.8];
+
+		// Create the planets
+		const planets = [];
+		for (let i = 0; i < 8; i++) {
+			// Set up the planet geometry and material
+			const planetGeometry = new THREE.SphereGeometry(planetSizes[i], 32, 32);
+			const planetMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+
+			// Create the planet
+			const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+			planet.name = planetNames[i];
+			planets.push(planet);
+			scene.add(planet);
+		}
+
+		// Animate the planets
+		function animate() {
+			requestAnimationFrame(animate);
+
+			// Update the positions of the planets
+			for (let i = 0; i < planets.length; i++) {
+				const planet = planets[i];
+				planet.position.x = Math.sin(performance.now() / 1000 / planetPeriods[i]) * planetDistances[i];
+				planet.position.z = Math.cos(performance.now() / 1000 / planetPeriods[i]) * planetDistances[i];
+			}
+
+			// Render the scene
+			renderer.render(scene, camera);
+		}
+		animate();
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
+</body>
+
+</html>
